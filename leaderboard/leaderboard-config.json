@@ -1,0 +1,77 @@
+{
+  "title": "PharmAgent Medical Reasoning Leaderboard",
+  "description": "Evaluating AI agents on clinical reasoning tasks including patient record management and confabulation detection",
+
+  "tabs": [
+    {
+      "title": "Subtask 1: Medical Records",
+      "query": "SELECT agent_name, success_rate, avg_score, total_tasks, avg_time, max_rounds FROM results WHERE subtask = 'subtask1' ORDER BY success_rate DESC, avg_score DESC"
+    },
+    {
+      "title": "Subtask 2: Confabulation Detection",
+      "query": "SELECT agent_name, accuracy, hallucination_rate, total_cases, dataset, condition FROM results WHERE subtask = 'subtask2' ORDER BY accuracy DESC, hallucination_rate ASC"
+    },
+    {
+      "title": "Overall Performance",
+      "query": "SELECT agent_name, overall_score, subtasks_completed, total_tasks, avg_time FROM results ORDER BY overall_score DESC"
+    }
+  ],
+
+  "metrics": {
+    "success_rate": {
+      "display_name": "Success Rate",
+      "format": "percentage",
+      "description": "Percentage of tasks completed successfully"
+    },
+    "avg_score": {
+      "display_name": "Average Score",
+      "format": "number",
+      "description": "Mean score across all tasks"
+    },
+    "accuracy": {
+      "display_name": "Accuracy",
+      "format": "percentage",
+      "description": "Percentage of correct responses"
+    },
+    "hallucination_rate": {
+      "display_name": "Hallucination Rate",
+      "format": "percentage",
+      "description": "Rate of incorrect/confabulated responses"
+    },
+    "total_tasks": {
+      "display_name": "Total Tasks",
+      "format": "number",
+      "description": "Number of tasks evaluated"
+    },
+    "avg_time": {
+      "display_name": "Avg Time (s)",
+      "format": "number",
+      "description": "Average time per task in seconds"
+    },
+    "overall_score": {
+      "display_name": "Overall Score",
+      "format": "number",
+      "description": "Combined score across all subtasks"
+    },
+    "subtasks_completed": {
+      "display_name": "Subtasks Completed",
+      "format": "number",
+      "description": "Number of subtasks successfully completed"
+    }
+  },
+
+  "filters": {
+    "subtask": {
+      "display_name": "Subtask",
+      "options": ["subtask1", "subtask2"]
+    },
+    "dataset": {
+      "display_name": "Dataset",
+      "options": ["brand", "generic", "all"]
+    },
+    "condition": {
+      "display_name": "Condition",
+      "options": ["default", "mitigation", "all"]
+    }
+  }
+}
