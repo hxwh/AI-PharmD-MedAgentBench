@@ -110,8 +110,37 @@ AI-PharmD-MedAgentBench/
     ├── scenario.toml          # Assessment configuration
     ├── generate_compose.py    # Docker Compose generator
     ├── record_provenance.py   # Provenance recorder
-    ├── results/               # Assessment results (JSON)
+    ├── results_format_adapter.py # Results transformation for leaderboard
+    ├── results/               # Assessment results (leaderboard format)
     └── submissions/           # Submission configs and provenance
+```
+
+## Results Format
+
+The leaderboard produces results in a simplified format compatible with AgentBeats:
+
+### Subtask 1 (Medical Record Tasks)
+```json
+{
+  "subtask": "subtask1",
+  "participant_id": "agent_id",
+  "timestamp": "2026-02-01T07:38:48.948353",
+  "config": {...},
+  "score": 0.85,
+  "success_rate": 0.90
+}
+```
+
+### Subtask 2 (Confabulation Detection)
+```json
+{
+  "subtask": "subtask2",
+  "participant_id": "agent_id",
+  "timestamp": "2026-02-01T07:38:48.948353",
+  "config": {...},
+  "accuracy": 0.75,
+  "hallucination_rate": 0.25
+}
 ```
 
 ## Links

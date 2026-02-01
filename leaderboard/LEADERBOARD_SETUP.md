@@ -22,13 +22,24 @@ AI-PharmD-MedAgentBench/
 │   ├── scenario.toml          # Assessment configuration
 │   ├── generate_compose.py    # Docker Compose generator
 │   ├── record_provenance.py   # Provenance recorder
+│   ├── results_format_adapter.py # Transforms results for leaderboard compatibility
 │   ├── README.md              # Leaderboard documentation
-│   ├── results/               # Assessment results (JSON files)
+│   ├── results/               # Assessment results (leaderboard format)
 │   └── submissions/           # Submission configs and provenance
 └── ... (other project files)
 ```
 
 **Important**: GitHub Actions workflows must be in the repository root's `.github/workflows/` directory, not in subdirectories.
+
+## Results Format Transformation
+
+The workflow automatically transforms PharmAgent's detailed evaluation results into AgentBeats-compatible format:
+
+1. **AgentBeats Client** produces `output/results.json` with A2A protocol artifacts
+2. **Results Format Adapter** transforms this into leaderboard-compatible metrics
+3. **Final results.json** contains only the scoring metrics defined in `leaderboard-config.json`
+
+This ensures compatibility between PharmAgent's rich evaluation data and AgentBeats' leaderboard display requirements.
 
 ## Step-by-Step Setup
 
