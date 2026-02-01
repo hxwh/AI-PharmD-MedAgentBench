@@ -387,17 +387,17 @@ docker run -p 8003:8002 mcp-server
 
 #### MedAgentBench Evaluator (Green Agent)
 # Build the image
-docker build -t green-agent .
+docker build -t hxwh/ai-pharmd-medagentbench-green:latest .
 
 # Run the container
-docker run -p 9009:9009 green-agent
+docker run -p 9009:9009 hxwh/ai-pharmd-medagentbench-green:latest
 
 #### PharmD Agent (Purple Agent)
 # Build the image
-docker build -f purple_agent/Dockerfile -t purple-agent .
+docker build -f purple_agent/Dockerfile -t hxwh/ai-pharmd-medagentbench-purple:latest .
 
 # Run the container
-docker run -p 9019:9019 purple-agent
+docker run -p 9019:9019 hxwh/ai-pharmd-medagentbench-purple:latest
 
 ### Quick Start Script
 
