@@ -1,0 +1,366 @@
+[
+  {
+    "name": "search_patients",
+    "description": "Patient.Search - Filter or search for patients based on demographics, identifiers, or contact information. Retrieves patient demographic information from a patient's chart for each matching patient record.",
+    "parameters": {
+      "type": "object",
+      "properties": {
+        "identifier": {"type": "string", "description": "The patient's identifier."},
+        "name": {"type": "string", "description": "Any part of the patient's name. When discrete name parameters are used, such as family or given, this parameter is ignored."},
+        "family": {"type": "string", "description": "The patient's family (last) name."},
+        "given": {"type": "string", "description": "The patient's given name. May include first and middle names."},
+        "birthdate": {"type": "string", "description": "The patient's date of birth in the format YYYY-MM-DD."},
+        "gender": {"type": "string", "description": "The patient's legal sex. The legal-sex parameter is preferred."}
+      },
+      "required": []
+    }
+  },
+  {
+    "name": "list_patient_problems",
+    "description": "Condition.Search (Problems) - Retrieve problems from a patient's chart. This includes any data found in the patient's problem list across all encounters. Note that this resource retrieves only data stored in problem list records. Medical history data documented outside of a patient's problem list isn't available unless retrieved using another method.",
+    "parameters": {
+      "type": "object",
+      "properties": {
+        "patient": {"type": "string", "description": "Reference to a patient resource the condition is for."},
+        "category": {"type": "string", "description": "Always 'problem-list-item' for this API."},
+        "count": {"type": "integer", "description": "Maximum number of conditions to return. Default 1000 to get all conditions."}
+      },
+      "required": ["patient"]
+    }
+  },
+  {
+    "name": "get_patient_conditions",
+    "description": "Get simplified condition names for a patient in ONE call. PREFERRED tool for getting a patient's problem list. Fetches conditions and extracts simplified names automatically (e.g., 'Diabetes', 'Hypertension'). Use this instead of list_patient_problems + extract_simplified_conditions.",
+    "parameters": {
+      "type": "object",
+      "properties": {
+        "patient": {"type": "string", "description": "Patient reference (e.g., 'Patient/S2874099')."}
+      },
+      "required": ["patient"]
+    }
+  },
+  {
+    "name": "list_lab_observations",
+    "description": "Observation.Search (Labs) - Return component level data for lab results.",
+    "parameters": {
+      "type": "object",
+      "properties": {
+        "patient": {"type": "string", "description": "Reference to a patient resource the observation is for."},
+        "code": {"type": "string", "description": "The observation identifier (base name). Use exact codes: 'GLU' for glucose, 'K' for potassium, 'MG' for magnesium, 'HBA1C' for HbA1c."},
+        "date": {"type": "string", "description": "Date when the specimen was obtained."}
+      },
+      "required": ["patient", "code"]
+    }
+  },
+  {
+    "name": "get_latest_lab_value",
+    "description": "Get the latest lab value for a patient in ONE call. PREFERRED tool for getting the most recent lab result. Fetches observations and extracts the latest value automatically. Returns: {latest_value, latest_datetime, found}. Use this instead of list_lab_observations + get_latest_observation_value.",
+    "parameters": {
+      "type": "object",
+      "properties": {
+        "patient": {"type": "string", "description": "Patient reference (e.g., 'Patient/S2874099')."},
+        "code": {"type": "string", "description": "Lab code: 'GLU' for glucose, 'K' for potassium, 'MG' for magnesium, 'HBA1C' for HbA1c."}
+      },
+      "required": ["patient", "code"]
+    }
+  },
+  {
+    "name": "list_vital_signs",
+    "description": "Observation.Search (Vitals) - Retrieve vital sign data from a patient's chart, as well as any other non-duplicable data found in the patient's flowsheets across all encounters.",
+    "parameters": {
+      "type": "object",
+      "properties": {
+        "patient": {"type": "string", "description": "Reference to a patient resource the observation is for."},
+        "category": {"type": "string", "description": "Use 'vital-signs' to search for vitals observations.", "default": "vital-signs"},
+        "date": {"type": "string", "description": "The date range for when the observation was taken."}
+      },
+      "required": ["patient"]
+    }
+  },
+  {
+    "name": "record_vital_observation",
+    "description": "Observation.Create (Vitals) - File vital signs to all non-duplicable flowsheet rows. This resource can file vital signs for all flowsheets.",
+    "parameters": {
+      "type": "object",
+      "properties": {
+        "resourceType": {"type": "string", "description": "Use 'Observation' for vitals observations."},
+        "category": {
+          "type": "array",
+          "description": "Array of category objects with coding for vital-signs.",
+          "items": {
+            "type": "object",
+            "properties": {
+              "coding": {
+                "type": "array",
+                "items": {
+                  "type": "object",
+                  "properties": {
+                    "system": {"type": "string", "description": "Use 'http://hl7.org/fhir/observation-category'"},
+                    "code": {"type": "string", "description": "Use 'vital-signs'"},
+                    "display": {"type": "string", "description": "Use 'Vital Signs'"}
+                  }
+                }
+              }
+            }
+          }
+        },
+        "code": {
+          "type": "object",
+          "description": "Code object specifying what is being measured.",
+          "properties": {
+            "text": {"type": "string", "description": "What is being measured (e.g., 'BP', 'Temp', 'HR', 'SpO2')"}
+          }
+        },
+        "effectiveDateTime": {"type": "string", "description": "The date and time the observation was taken, in ISO format (e.g., '2020-10-11T10:15:00+00:00')."},
+        "status": {"type": "string", "description": "The status of the observation. Only 'final' is supported."},
+        "valueString": {"type": "string", "description": "Measurement value as a string (e.g., '122/80 mmHg' for BP)."},
+        "subject": {
+          "type": "object",
+          "description": "The patient this observation is about.",
+          "properties": {
+            "reference": {"type": "string", "description": "The patient FHIR ID (e.g., 'Patient/12345')"}
+          }
+        }
+      },
+      "required": ["resourceType", "category", "code", "effectiveDateTime", "status", "valueString", "subject"]
+    }
+  },
+  {
+    "name": "list_medication_requests",
+    "description": "MedicationRequest.Search (Signed Medication Order) - Query for medication orders based on a patient and optionally status or category. Returns inpatient-ordered medications, clinic-administered medications (CAMS), patient-reported medications, and reconciled medications.",
+    "parameters": {
+      "type": "object",
+      "properties": {
+        "patient": {"type": "string", "description": "The FHIR patient ID."},
+        "category": {"type": "string", "description": "The category of medication orders. Supported: 'Inpatient', 'Outpatient' (CAMS), 'Community' (prescriptions), 'Discharge'."},
+        "date": {"type": "string", "description": "The medication administration date. Use caution when filtering by date."}
+      },
+      "required": ["patient"]
+    }
+  },
+  {
+    "name": "create_medication_request",
+    "description": "MedicationRequest.Create - Create a medication order for a patient.",
+    "parameters": {
+      "type": "object",
+      "properties": {
+        "resourceType": {"type": "string", "description": "Use 'MedicationRequest' for medication requests."},
+        "medicationCodeableConcept": {
+          "type": "object",
+          "description": "Medication codeable concept with coding array and text.",
+          "properties": {
+            "coding": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "system": {"type": "string", "description": "Coding system such as 'http://hl7.org/fhir/sid/ndc'"},
+                  "code": {"type": "string", "description": "The actual medication code"},
+                  "display": {"type": "string", "description": "Display name of the medication"}
+                }
+              }
+            },
+            "text": {"type": "string", "description": "The order display name of the medication"}
+          }
+        },
+        "authoredOn": {"type": "string", "description": "The date the prescription was written, in ISO format."},
+        "dosageInstruction": {
+          "type": "array",
+          "description": "Array of dosage instructions with route and doseAndRate.",
+          "items": {
+            "type": "object",
+            "properties": {
+              "route": {"type": "string", "description": "The medication route (e.g., 'IV', 'oral', 'subcutaneous')"},
+              "doseAndRate": {
+                "type": "array",
+                "items": {
+                  "type": "object",
+                  "properties": {
+                    "doseQuantity": {
+                      "type": "object",
+                      "properties": {
+                        "value": {"type": "number", "description": "Numeric dose value"},
+                        "unit": {"type": "string", "description": "Unit for the dose (e.g., 'g', 'mg', 'mL')"}
+                      }
+                    },
+                    "rateQuantity": {
+                      "type": "object",
+                      "properties": {
+                        "value": {"type": "number", "description": "Numeric rate value"},
+                        "unit": {"type": "string", "description": "Unit for the rate (e.g., 'h' for per hour)"}
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "status": {"type": "string", "description": "The status of the medication request. Use 'active'."},
+        "intent": {"type": "string", "description": "Use 'order'."},
+        "subject": {
+          "type": "object",
+          "properties": {
+            "reference": {"type": "string", "description": "The patient FHIR ID (e.g., 'Patient/12345')"}
+          }
+        }
+      },
+      "required": ["resourceType", "medicationCodeableConcept", "authoredOn", "dosageInstruction", "status", "intent", "subject"]
+    }
+  },
+  {
+    "name": "list_patient_procedures",
+    "description": "Procedure.Search (Orders) - Retrieve completed procedures for a patient. Returns surgeries and procedures performed, including endoscopies, biopsies, counseling, and physiotherapy. Only completed procedures are returned.",
+    "parameters": {
+      "type": "object",
+      "properties": {
+        "patient": {"type": "string", "description": "Reference to a patient resource the procedure is for."},
+        "date": {"type": "string", "description": "Date or period that the procedure was performed, using FHIR date format."},
+        "code": {"type": "string", "description": "External CPT codes associated with the procedure."}
+      },
+      "required": ["patient", "date"]
+    }
+  },
+  {
+    "name": "create_service_request",
+    "description": "ServiceRequest.Create - Create an order for labs, imaging, or consults for a patient.",
+    "parameters": {
+      "type": "object",
+      "properties": {
+        "resourceType": {"type": "string", "description": "Use 'ServiceRequest' for service requests."},
+        "code": {
+          "type": "object",
+          "description": "The standard terminology codes (LOINC, SNOMED, CPT, etc.).",
+          "properties": {
+            "coding": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "system": {"type": "string", "description": "Coding system (e.g., 'http://loinc.org', 'http://snomed.info/sct')"},
+                  "code": {"type": "string", "description": "The actual code"},
+                  "display": {"type": "string", "description": "Display name"}
+                }
+              }
+            }
+          }
+        },
+        "authoredOn": {"type": "string", "description": "The order instant in ISO format."},
+        "status": {"type": "string", "description": "The status of the service request. Use 'active'."},
+        "intent": {"type": "string", "description": "Use 'order'."},
+        "priority": {"type": "string", "description": "Priority of the request. Must be 'stat'."},
+        "subject": {
+          "type": "object",
+          "properties": {
+            "reference": {"type": "string", "description": "The patient FHIR ID (e.g., 'Patient/12345')"}
+          }
+        },
+        "occurrenceDateTime": {"type": "string", "description": "The date and time for the service request to be conducted, in ISO format."},
+        "note": {
+          "type": "object",
+          "properties": {
+            "text": {"type": "string", "description": "Free text comment"}
+          }
+        }
+      },
+      "required": ["resourceType", "code", "authoredOn", "status", "intent", "priority", "subject"]
+    }
+  },
+  {
+    "name": "check_date_within_period",
+    "description": "Date Utility - Check if a date is within a specified period from a reference date. Returns whether date_to_check is within period_days BEFORE reference_date. DECISION GUIDE: is_within_period=TRUE means RECENT (do NOT order), FALSE means OLD (order new test).",
+    "parameters": {
+      "type": "object",
+      "properties": {
+        "date_to_check": {"type": "string", "description": "The date to check, in ISO format (e.g., '2020-10-11T03:05:00+00:00')."},
+        "reference_date": {"type": "string", "description": "The reference date to compare against, in ISO format."},
+        "period_days": {"type": "integer", "description": "The number of days for the period. Use 365 for 1 year, 30 for 1 month, 7 for 1 week."}
+      },
+      "required": ["date_to_check", "reference_date", "period_days"]
+    }
+  },
+  {
+    "name": "calculate_age",
+    "description": "Calculate a patient's age in years from their birth date. Returns age in complete years (rounded down).",
+    "parameters": {
+      "type": "object",
+      "properties": {
+        "birth_date": {"type": "string", "description": "The patient's birth date in ISO format or YYYY-MM-DD."},
+        "reference_date": {"type": "string", "description": "The reference date to calculate age at, in ISO format."}
+      },
+      "required": ["birth_date", "reference_date"]
+    }
+  },
+  {
+    "name": "evaluate_potassium_level",
+    "description": "Evaluate if potassium is low or normal compared to threshold.",
+    "parameters": {
+      "type": "object",
+      "properties": {
+        "potassium_value": {"type": "number", "description": "Potassium level (mmol/L)"},
+        "threshold": {"type": "number", "description": "Threshold (mmol/L)"}
+      },
+      "required": ["potassium_value", "threshold"]
+    }
+  },
+  {
+    "name": "evaluate_magnesium_level",
+    "description": "Lab Value Utility - Evaluate magnesium level and determine if IV replacement is needed. Thresholds: >=1.9 NORMAL, 1.5-1.9 MILD (1g/1h), 1.0-1.5 MODERATE (2g/2h), <1.0 SEVERE (4g/4h).",
+    "parameters": {
+      "type": "object",
+      "properties": {
+        "magnesium_value": {"type": "number", "description": "The magnesium level in mg/dL to evaluate."}
+      },
+      "required": ["magnesium_value"]
+    }
+  },
+  {
+    "name": "calculate_potassium_dose",
+    "description": "Lab Value Utility - Calculate oral potassium replacement dose for hypokalemia. Formula: dose_mEq = (threshold - potassium_value) / 0.1 * 10. Returns needs_replacement, dose_mEq, medication_ndc ('40032-917-01').",
+    "parameters": {
+      "type": "object",
+      "properties": {
+        "potassium_value": {"type": "number", "description": "The potassium level in mmol/L to evaluate."},
+        "threshold": {"type": "number", "description": "The threshold for hypokalemia (default 3.5 mmol/L).", "default": 3.5}
+      },
+      "required": ["potassium_value"]
+    }
+  },
+  {
+    "name": "get_latest_observation_value",
+    "description": "Extract the latest (most recent) observation value from a FHIR Observation bundle. Optionally filters to observations within cutoff_hours before reference_datetime.",
+    "parameters": {
+      "type": "object",
+      "properties": {
+        "observations_json": {"type": "string", "description": "JSON string of FHIR Bundle containing Observation entries."},
+        "cutoff_hours": {"type": "integer", "description": "Only consider observations within this many hours before reference time."},
+        "reference_datetime": {"type": "string", "description": "Reference datetime in ISO format. Default: '2023-11-13T10:15:00+00:00'."}
+      },
+      "required": ["observations_json"]
+    }
+  },
+  {
+    "name": "extract_simplified_conditions",
+    "description": "Extract simplified condition names from FHIR Condition bundle. Maps ICD-10 codes to common names (E10/E11->Diabetes, I10-I16->Hypertension, I25->CAD, I48->AFib, I63->Stroke, I71->Aortic Aneurysm).",
+    "parameters": {
+      "type": "object",
+      "properties": {
+        "conditions_json": {"type": "string", "description": "JSON string of FHIR Bundle containing Condition entries."}
+      },
+      "required": ["conditions_json"]
+    }
+  },
+  {
+    "name": "calculate_average_observation",
+    "description": "Calculate the average of observation values within a time window. Computes mean of all numeric valueQuantity values from observations within cutoff_hours before reference_datetime.",
+    "parameters": {
+      "type": "object",
+      "properties": {
+        "observations_json": {"type": "string", "description": "JSON string of FHIR Bundle containing Observation entries."},
+        "cutoff_hours": {"type": "integer", "description": "Only consider observations within this many hours before reference time."},
+        "reference_datetime": {"type": "string", "description": "Reference datetime in ISO format. Default: '2023-11-13T10:15:00+00:00'."}
+      },
+      "required": ["observations_json", "cutoff_hours"]
+    }
+  }
+]

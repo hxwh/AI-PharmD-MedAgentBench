@@ -1,0 +1,25 @@
+# MedAgentBench Purple Agent (Agent Under Test) Docker Image
+FROM python:3.10-slim
+
+# Create non-root user
+RUN adduser --disabled-password --gecos '' agent
+USER agent
+WORKDIR /home/agent
+
+# Copy project files
+COPY --chown=agent:agent pyproject.toml ./
+COPY --chown=agent:agent src src
+
+# Install dependencies
+RUN pip install --no-cache-dir --user -e .
+
+# Set Python path
+ENV PATH="/home/agent/.local/bin:${PATH}"
+ENV PYTHONPATH="/home/agent/src:${PYTHONPATH}"
+
+# Expose port
+EXPOSE 9019
+
+# Entry point - run purple agent server
+ENTRYPOINT ["python", "src/purple/server.py"]
+CMD ["--host", "0.0.0.0", "--port", "9019"]

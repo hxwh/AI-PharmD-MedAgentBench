@@ -1,0 +1,10 @@
+# Assessment results
+results/
+submissions/
+
+# Python
+__pycache__/
+*.pyc
+
+# OS
+.DS_Store

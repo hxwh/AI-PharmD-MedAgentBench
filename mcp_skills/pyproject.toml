@@ -1,0 +1,28 @@
+[project]
+name = "pharmagent-skill-mcp"
+version = "1.0.0"
+description = "PharmAgent Skill MCP Server - FHIR tools for Green and Purple agents"
+readme = "README.md"
+requires-python = ">=3.10"
+dependencies = [
+    "fastmcp>=2.0.0",
+    "httpx>=0.28.1",
+    "pydantic>=2.0.0",
+    "python-dotenv>=1.0.0",
+]
+
+[project.optional-dependencies]
+test = [
+    "pytest>=8.0.0",
+    "pytest-asyncio>=0.24.0",
+]
+
+[project.scripts]
+pharmagent-mcp = "mcp_skills.fastmcp.server:main"
+
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[tool.hatch.build.targets.wheel]
+packages = ["mcp_skills"]

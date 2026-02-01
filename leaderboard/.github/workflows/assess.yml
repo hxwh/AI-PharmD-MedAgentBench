@@ -1,0 +1,51 @@
+name: Run Assessment
+
+on:
+  pull_request:
+    branches: [ main ]
+  push:
+    branches: [ main ]
+
+jobs:
+  assess:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v4
+
+    - name: Generate Docker Compose
+      run: python generate_compose.py
+
+    - name: Run assessment with Docker Compose
+      env:
+        GOOGLE_API_KEY: ${{ secrets.GOOGLE_API_KEY }}
+      run: |
+        docker compose up -d
+        docker compose logs -f &
+        sleep 60  # Wait for services to be healthy
+        python assess.py
+
+    - name: Record provenance
+      run: python record_provenance.py
+
+    - name: Generate submission
+      run: python generate_submission.py
+
+    - name: Cleanup
+      if: always()
+      run: docker compose down
+
+    - name: Commit results
+      if: github.event_name == 'pull_request'
+      run: |
+        git config --global user.name 'github-actions[bot]'
+        git config --global user.email 'github-actions[bot]@users.noreply.github.com'
+
+        git checkout -b submissions/${{ github.event.number }}
+        cp results/* submissions/ 2>/dev/null || true
+
+        git add submissions/
+        git commit -m "Add assessment results for PR #${{ github.event.number }}" || echo "No changes"
+
+        git push origin submissions/${{ github.event.number }}

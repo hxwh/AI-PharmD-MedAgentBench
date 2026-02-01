@@ -1,0 +1,79 @@
+# MedAgentBench Green Agent - AgentBeats Compatible
+# See: https://github.com/RDI-Foundation/agentbeats-tutorial
+
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[project]
+name = "medagentbench-green-agent"
+version = "0.1.0"
+description = "MedAgentBench Green Agent - Medical reasoning task evaluator with A2A + MCP"
+readme = "README.md"
+requires-python = ">=3.11"
+dependencies = [
+    "a2a-sdk[http-server]>=0.3.20",
+    "httpx>=0.28.1",
+    "medagentbench-purple-agent",
+    "pharmagent-skill-mcp",
+    "pocketflow>=0.0.1",
+    "pydantic>=2.11.9",
+    "python-dotenv>=1.1.1",
+    "uvicorn>=0.38.0",
+]
+
+[project.optional-dependencies]
+# Green agent specific dependencies
+green = [
+    "google-genai>=1.36.0",
+    "fastmcp>=2.0.0",
+    "pyyaml>=6.0",
+]
+# Purple agent specific dependencies  
+purple = [
+    "google-genai>=1.36.0",
+    "fastmcp>=2.0.0",
+]
+# Testing dependencies
+test = [
+    "pytest>=8.0.0",
+    "pytest-asyncio>=0.24.0",
+    "pytest-cov>=4.0.0",
+]
+
+[project.scripts]
+medagentbench-run = "scripts.run_scenario:main"
+
+[tool.uv]
+package = true
+
+[tool.uv.workspace]
+members = [
+    "mcp_skills",
+    "purple_agent",
+]
+
+[tool.uv.sources]
+pharmagent-skill-mcp = { workspace = true, editable = true }
+medagentbench-purple-agent = { workspace = true, editable = true }
+
+[dependency-groups]
+dev = [
+    "mypy>=1.18.1",
+    "ruff>=0.4.0",
+]
+
+[tool.hatch.build.targets.wheel]
+packages = ["src"]
+
+[tool.pytest.ini_options]
+pythonpath = ["src"]
+testpaths = ["tests"]
+asyncio_mode = "auto"
+
+[tool.ruff]
+line-length = 100
+target-version = "py311"
+
+[tool.ruff.lint]
+select = ["E", "F", "W", "I"]

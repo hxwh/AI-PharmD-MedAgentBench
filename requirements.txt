@@ -1,0 +1,17 @@
+# Core dependencies
+a2a-sdk[http-server]>=0.3.20
+pydantic>=2.12.5
+uvicorn>=0.38.0
+google-genai>=0.2.0
+fastmcp>=2.14.0
+mcp>=1.26.0
+httpx>=0.28.1
+pyyaml>=6.0
+
+# For examples (mock purple agent)
+fastapi>=0.100.0
+
+# Testing dependencies (optional)
+pytest>=8.0.0
+pytest-asyncio>=0.24.0
+pytest-cov>=4.0.0

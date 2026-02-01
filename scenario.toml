@@ -1,0 +1,46 @@
+# MedAgentBench Leaderboard Scenario Configuration
+# Generated from AgentBeats Leaderboard Template
+# See: https://github.com/RDI-Foundation/agentbeats-leaderboard-template
+
+[green_agent]
+# Replace with your actual AgentBeats agent ID after registering your green agent
+agentbeats_id = "your-pharmagent-green-agent-id"
+env = { GOOGLE_API_KEY = "${GOOGLE_API_KEY}" }
+
+[[participants]]
+role = "agent"
+# Submitters will fill in their purple agent ID
+agentbeats_id = ""
+env = { GOOGLE_API_KEY = "${GOOGLE_API_KEY}" }
+
+[config]
+# Subtask selection: "subtask1" or "subtask2"
+subtask = "subtask1"
+
+# Subtask 1 Configuration (Medical Record Tasks)
+# FHIR server configuration
+fhir_port = 8080
+mcp_port = 8002
+green_port = 9009
+purple_port = 9019
+
+# Task selection for Subtask 1
+# Options: single task (e.g., "task1_5"), task type (e.g., "task1"), or "all"
+task_ids = ["task1_5"]
+
+# Assessment parameters
+max_rounds = 10
+timeout = 600
+
+# Subtask 2 Configuration (Confabulation Detection)
+# Dataset selection: "brand", "generic", or "all"
+dataset = "brand"
+
+# Condition selection: "default", "mitigation", or "all"
+condition = "default"
+
+# Evaluation scope: "full" or "subset"
+evaluation_mode = "subset"
+
+# Subset size when using subset mode
+subset_size = 2

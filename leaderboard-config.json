@@ -1,0 +1,20 @@
+{
+  "name": "PharmAgent Leaderboard",
+  "description": "Medical AI Agent Benchmark for evaluating clinical reasoning capabilities",
+  "version": "1.0.0",
+  "github_repo": "https://github.com/hxwh/AI-PharmD-MedAgentBench",
+  "queries": [
+    {
+      "name": "Medical Record Tasks",
+      "query": "SELECT participant_id as id, result.score as score, result.success_rate as accuracy FROM submissions WHERE config.subtask = 'subtask1' ORDER BY score DESC"
+    },
+    {
+      "name": "Confabulation Detection",
+      "query": "SELECT participant_id as id, result.accuracy as score, (1.0 - result.hallucination_rate) as accuracy FROM submissions WHERE config.subtask = 'subtask2' ORDER BY score DESC"
+    },
+    {
+      "name": "Overall Performance",
+      "query": "SELECT participant_id as id, AVG(CASE WHEN config.subtask = 'subtask1' THEN result.score ELSE result.accuracy END) as score, COUNT(*) as accuracy FROM submissions GROUP BY participant_id ORDER BY score DESC"
+    }
+  ]
+}

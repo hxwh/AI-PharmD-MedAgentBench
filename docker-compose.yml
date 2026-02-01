@@ -1,0 +1,81 @@
+version: '3.8'
+
+services:
+  # MCP Server for FHIR tools
+  mcp-server:
+    build:
+      context: .
+      dockerfile: mcp_skills/Dockerfile
+    container_name: aipharmd-mcp
+    ports:
+      - "127.0.0.1:8002:8002"
+    environment:
+      - PYTHONUNBUFFERED=1
+      - MCP_FHIR_API_BASE=http://host.docker.internal:8080/fhir/
+    networks:
+      - aipharmd-net
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8002/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+
+  # Green Agent (Evaluator)
+  green-agent:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: aipharmd-green
+    ports:
+      - "127.0.0.1:9009:9009"
+    env_file:
+      - .env
+    environment:
+      - GREEN_AGENT_HOST=0.0.0.0
+      - GREEN_AGENT_PORT=9009
+      - PYTHONUNBUFFERED=1
+    networks:
+      - aipharmd-net
+    restart: unless-stopped
+    depends_on:
+      mcp-server:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:9009/.well-known/agent-card.json"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+
+  # Purple Agent (Agent Under Test)
+  purple-agent:
+    build:
+      context: .
+      dockerfile: src/purple/Dockerfile.purple-agent
+    container_name: aipharmd-purple
+    ports:
+      - "127.0.0.1:9019:9019"
+    env_file:
+      - .env
+    environment:
+      - PURPLE_AGENT_HOST=0.0.0.0
+      - PURPLE_AGENT_PORT=9019
+      - MCP_FHIR_API_BASE=http://mcp-server:8002
+      - MAX_ROUNDS=10
+      - PYTHONUNBUFFERED=1
+    networks:
+      - aipharmd-net
+    restart: unless-stopped
+    depends_on:
+      mcp-server:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:9019/.well-known/agent-card.json"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+
+networks:
+  aipharmd-net:
+    driver: bridge
+    name: aipharmd-net

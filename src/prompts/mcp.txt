@@ -1,0 +1,9 @@
+MedAgentBench MCP Server - FHIR tools for medical LLM agent evaluation.
+
+Provides 16 atomic tools for clinical workflows:
+- Patient search and demographics
+- Lab observations, vitals, medications, procedures
+- Order creation (medications, service requests)
+- Clinical calculation utilities
+
+Use lab codes: GLU, K, MG, A1C (not LOINC codes).

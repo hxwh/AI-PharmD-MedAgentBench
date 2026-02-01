@@ -1,0 +1,45 @@
+# MedAgentBench Purple Agent - AgentBeats Compatible
+# See: https://github.com/RDI-Foundation/agentbeats-tutorial
+
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[project]
+name = "medagentbench-purple-agent"
+version = "1.0.0"
+description = "MedAgentBench Purple Agent - Pharmacist AI agent using FHIR tools via MCP"
+readme = "README.md"
+requires-python = ">=3.11"
+dependencies = [
+    "a2a-sdk[http-server]>=0.3.20",
+    "httpx>=0.28.1",
+    "pydantic>=2.11.9",
+    "python-dotenv>=1.1.1",
+    "uvicorn>=0.38.0",
+    "google-genai>=1.36.0",
+    "mcp>=1.1.0",
+]
+
+[project.optional-dependencies]
+test = [
+    "pytest>=8.0.0",
+    "pytest-asyncio>=0.24.0",
+]
+
+[tool.uv]
+package = true
+
+[dependency-groups]
+dev = [
+    "mypy>=1.18.1",
+    "ruff>=0.4.0",
+]
+
+[tool.hatch.build.targets.wheel]
+packages = ["src"]
+
+[tool.pytest.ini_options]
+pythonpath = ["src"]
+testpaths = ["tests"]
+asyncio_mode = "auto"

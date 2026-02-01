@@ -1,0 +1,26 @@
+[green_agent]
+# Replace with your actual AgentBeats green agent ID from agentbeats.dev
+agentbeats_id = "your-pharmagent-green-agent-id"
+env = { GOOGLE_API_KEY = "${GOOGLE_API_KEY}" }
+
+[[participants]]
+# Leave empty - submitters will fill in their purple agent ID
+agentbeats_id = ""
+name = "agent"
+env = { GOOGLE_API_KEY = "${GOOGLE_API_KEY}" }
+
+[config]
+# Default assessment configuration
+subtask = "subtask1"
+
+# Subtask 1: Medical Record Tasks
+# Available tasks: task1, task2, task3, task4, task5, task6, task7, task8, task9, task10
+task_ids = ["task1_5"]  # Single task instance for quick testing
+max_rounds = 10
+timeout = 600
+
+# Subtask 2: Confabulation Detection (uncomment to use)
+# dataset = "brand"  # or "generic"
+# condition = "default"  # or "mitigation"
+# evaluation_mode = "subset"
+# subset_size = 2
