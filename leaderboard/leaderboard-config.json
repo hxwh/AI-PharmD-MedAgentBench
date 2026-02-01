@@ -5,29 +5,15 @@
   "tabs": [
     {
       "title": "Subtask 1: Medical Records",
-      "query": {
-        "select": ["agent_name", "success_rate", "avg_score", "total_tasks", "avg_time", "max_rounds"],
-        "from": "results",
-        "where": {"subtask": "subtask1"},
-        "order_by": ["success_rate DESC", "avg_score DESC"]
-      }
+      "query": "SELECT agent_name, success_rate, avg_score, total_tasks, avg_time, max_rounds FROM results WHERE subtask = 'subtask1' ORDER BY success_rate DESC, avg_score DESC"
     },
     {
       "title": "Subtask 2: Confabulation Detection",
-      "query": {
-        "select": ["agent_name", "accuracy", "hallucination_rate", "total_cases", "dataset", "condition"],
-        "from": "results",
-        "where": {"subtask": "subtask2"},
-        "order_by": ["accuracy DESC", "hallucination_rate ASC"]
-      }
+      "query": "SELECT agent_name, accuracy, hallucination_rate, total_cases, dataset, condition FROM results WHERE subtask = 'subtask2' ORDER BY accuracy DESC, hallucination_rate ASC"
     },
     {
       "title": "Overall Performance",
-      "query": {
-        "select": ["agent_name", "overall_score", "subtasks_completed", "total_tasks", "avg_time"],
-        "from": "results",
-        "order_by": ["overall_score DESC"]
-      }
+      "query": "SELECT agent_name, overall_score, subtasks_completed, total_tasks, avg_time FROM results ORDER BY overall_score DESC"
     }
   ],
 
