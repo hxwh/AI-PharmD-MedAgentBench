@@ -108,10 +108,10 @@ AI-PharmD-MedAgentBench/
 │   └── run-scenario.yml       # Assessment workflow (at repo root)
 └── leaderboard/
     ├── scenario.toml          # Assessment configuration
-    ├── generate_compose.py    # Docker Compose generator
-    ├── record_provenance.py   # Provenance recorder
-    ├── results_format_adapter.py # Results transformation for leaderboard
-    ├── results/               # Assessment results (leaderboard format)
+    ├── generate_compose.py    # Docker Compose generator (API integration)
+    ├── record_provenance.py   # Provenance recorder (image digests + metadata)
+    ├── results_format_adapter.py # Transform AgentBeats results to leaderboard format
+    ├── results/               # Assessment results (leaderboard-compatible JSON)
     └── submissions/           # Submission configs and provenance
 ```
 

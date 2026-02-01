@@ -3,9 +3,11 @@
 # Docs: https://github.com/RDI-Foundation/agentbeats-leaderboard-template
 
 [green_agent]
-# Register your green agent at agentbeats.dev and add the ID here
+# Register your green agent at agentbeats.dev and replace the image line with:
+# agentbeats_id = "your-green-agent-id-from-agentbeats"
+# Then remove the image line below
 agentbeats_id = ""
-# For local testing only (remove agentbeats_id when using image)
+# For local testing only (remove when using agentbeats_id above)
 image = "hxwh/ai-pharmd-medagentbench-green:latest"
 env = { GOOGLE_API_KEY = "${GOOGLE_API_KEY}" }
 

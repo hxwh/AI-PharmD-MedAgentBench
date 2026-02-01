@@ -19,6 +19,20 @@
       "description": "Distinguishing real medications from Pokemon names"
     }
   },
+  "queries": [
+    {
+      "name": "Medical Record Tasks",
+      "query": "SELECT participant_id as id, score, success_rate as accuracy, timestamp as completion_time FROM results WHERE subtask = 'subtask1' ORDER BY score DESC"
+    },
+    {
+      "name": "Confabulation Detection",
+      "query": "SELECT participant_id as id, accuracy as score, (1.0 - hallucination_rate) as accuracy, timestamp as completion_time FROM results WHERE subtask = 'subtask2' ORDER BY accuracy DESC"
+    },
+    {
+      "name": "Overall Performance",
+      "query": "SELECT participant_id as id, AVG(CASE WHEN subtask = 'subtask1' THEN score ELSE accuracy END) as score, COUNT(*) as accuracy, MAX(timestamp) as completion_time FROM results GROUP BY participant_id ORDER BY score DESC"
+    }
+  ],
   "results_directory": "leaderboard/results/",
   "submissions_directory": "leaderboard/submissions/"
 }
